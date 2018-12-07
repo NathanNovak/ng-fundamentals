@@ -8,24 +8,40 @@ import {
   EventDetailsComponent,
   CreateEventComponent,
   EventRouteActivator,
-  EventResolveService
+  EventResolveService,
+  VoterService,
+  DurationPipe,
+  UpvoteComponent,
+  LocationValidator
 } from './events/index';
 import { EventsAppComponent } from './events-app.component';
-// import { EventsListComponent } from './events/events-list.component';
-// import { EventThumbnailComponent } from './events/event-thumbnail.component';
 import { NavbarComponent } from './nav/navbar.component';
-// import { EventService } from './events/shared/event-service.service';
-import { ToastrService } from './common/toastr.service';
-// import { EventDetailsComponent } from './events/event-details/event-details.component';
+import {
+  TOASTR_TOKEN,
+  JQ_TOKEN,
+  Toastr,
+  CollapsibleWellComponent,
+  SimpleModalComponent,
+  ModalTriggerDirective
+} from './common/index';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './routes';
-// import { CreateEventComponent } from './events/shared/create-event.component';
 import { ErrorPageComponent } from './errors/error-page.component';
-// import { EventRouteActivator } from './events/event-details/event-route-activator.service';
-// import { EventResolveService } from './events/shared/event-resolve.service';
+import { AuthService } from './user/auth.service';
+import { SessionListComponent } from './events/event-details/session-list.component';
+import { CreateSessionComponent } from './events/event-details/create-session.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+const toastr: Toastr = window['toastr'];
+const jQuery = window['$'];
 
 @NgModule({
-  imports: [BrowserModule, RouterModule.forRoot(appRoutes)],
+  imports: [
+    BrowserModule,
+    RouterModule.forRoot(appRoutes),
+    FormsModule,
+    ReactiveFormsModule
+  ],
   declarations: [
     EventsAppComponent,
     EventsListComponent,
@@ -34,22 +50,37 @@ import { ErrorPageComponent } from './errors/error-page.component';
     EventDetailsComponent,
     CreateEventComponent,
     ErrorPageComponent,
+    SessionListComponent,
+    CreateSessionComponent,
+    CollapsibleWellComponent,
+    DurationPipe,
+    SimpleModalComponent,
+    ModalTriggerDirective,
+    UpvoteComponent,
+    LocationValidator
   ],
-  providers: [EventService,
-    ToastrService,
+  providers: [
+    EventService,
+    { provide: TOASTR_TOKEN, useValue: toastr },
+    { provide: JQ_TOKEN, useValue: jQuery },
     EventRouteActivator,
     EventResolveService,
-  {
-    provide: 'canDeactivateCreateEvent',
-    useValue: checkDirtyState
-  }],
+    AuthService,
+    {
+      provide: 'canDeactivateCreateEvent',
+      useValue: checkDirtyState
+    },
+    VoterService
+  ],
   bootstrap: [EventsAppComponent]
 })
 export class AppModule {}
 
 export function checkDirtyState(component: CreateEventComponent) {
   if (component.isDirty) {
-    return window.confirm('You have not saved this event, do you really want to cancel?');
+    return window.confirm(
+      'You have not saved this event, do you really want to cancel?'
+    );
   }
   return true;
 }

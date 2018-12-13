@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from './user/auth.service';
 
 @Component({
   selector: 'app-events',
@@ -7,5 +8,11 @@ import { Component } from '@angular/core';
 <router-outlet></router-outlet> `,
 })
 export class EventsAppComponent {
-  title = 'ng-fundamentals';
+
+  constructor (private auth: AuthService) {}
+
+  // tslint:disable-next-line:use-life-cycle-interface
+  ngOnInit() {
+    this.auth.checkAuthenicationStatus();
+  }
 }
